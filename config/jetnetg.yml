@@ -14,7 +14,7 @@ z2_dim: 10
 weight_clip: 0.2
 add_noise: False
 kernel: l2
-data_file: ../mnist_graph_gan/jets/datasets/all_g_jets_150p_polarrel.pt
+data_file: /graphganvol/mnist_graph_gan/jets/datasets/all_g_jets_150p_polarrel.pt
 obj: 1
 base: 1.0
 pool: max1
