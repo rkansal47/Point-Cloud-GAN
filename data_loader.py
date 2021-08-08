@@ -96,13 +96,13 @@ class DataLoader(object):
 
         self.len_data = len(self.data)
 
-        self.prep1 = (lambda x, y: standardize_gpu(x, y, self.num_points_per_object)) if do_standardize else lambda x: x
+        self.prep1 = (lambda x, y: standardize_gpu(x, y, self.num_points_per_object)) if do_standardize else lambda x, y: x, y
         self.prep2 = (lambda x, y: augmentd_gpu(self.prep1(x, y)[0], y, self.batch_size)) if do_augmentation else self.prep1
 
         data_placeholder = tf.placeholder(self.data.dtype, self.data.shape)
         labels_placeholder = tf.placeholder(self.labels.dtype, self.labels.shape)
         dataset = tf.data.Dataset.from_tensor_slices((data_placeholder, labels_placeholder))
-        dataset = dataset.shuffle(self.len_data).repeat().batch(self.batch_size).map(self.prep2, num_parallel_calls=2)
+        dataset = dataset.shuffle(self.len_data).repeat().batch(self.batch_size)
         dataset = dataset.prefetch(buffer_size=10000)
         iterator = dataset.make_initializable_iterator()
 

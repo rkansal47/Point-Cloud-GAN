@@ -8,6 +8,8 @@ class PermEqui1_max(nn.Module):
     self.Gamma = nn.Linear(in_dim, out_dim)
 
   def forward(self, x):
+    print(x)
+    print(x.shape)
     xm = tf.reduce_max(x, axis=1, keepdims=True)
     x = self.Gamma(x-xm)
     return x

@@ -1,0 +1,4 @@
+structural_losses/*
+!structural_losses/makefile
+results
+__pycache__

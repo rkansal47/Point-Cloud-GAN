@@ -1,8 +1,8 @@
 #nvcc = /usr/local/cuda-8.0/bin/nvcc
-cudalib =  "/share/apps/cuda/lib64"
-tensorflow = "/share/apps/lib/python2.7/site-packages/tensorflow/include"
-nsync = "/share/apps/lib/python2.7/site-packages/tensorflow/include/external/nsync/public"
-TF_LIB = "/share/apps/lib/python2.7/site-packages/tensorflow" 
+cudalib =  "/usr/bin/cuda/lib64"
+tensorflow = "/usr/local/lib/python3.6/dist-packages/tensorflow/include"
+nsync = "/usr/local/lib/python3.6/dist-packages/tensorflow/include/external/nsync/public"
+TF_LIB = "/usr/local/lib/python3.6/dist-packages/tensorflow" 
 
 #orflowll: tf_approxmatch_so.so tf_approxmatch_g.cu.o tf_nndistance_so.so tf_nndistance_g.cu.o
 
