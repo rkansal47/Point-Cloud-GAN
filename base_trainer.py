@@ -20,7 +20,7 @@ class BaseTrainer(object):
         self.D = D
         self.G_inv = G_inv
 
-        self.gpus = [0, 1]
+        self.gpus = [0]
 
         self.pth_G = getattr(torch_model, self.G.__class__.__name__)(z1_dim=params['z1_dim'], z2_dim=params['z2_dim'], x_dim=params['x_dim'])
         self.pth_G_inv = getattr(torch_model, self.G_inv.__class__.__name__)(x_dim=params['x_dim'], d_dim=params['d_dim'], z1_dim=params['z1_dim'], pool=params['pool'])
@@ -34,7 +34,7 @@ class BaseTrainer(object):
         #config = tf.ConfigProto(allow_soft_placement = True)
 
         self.sess = tf.Session()  # config=config)
-        self.samples_from_target_distribution = self.init_data().next_batch
+        self.samples_from_target_distribution = self.init_data().next_batch[0]
 
         #pdb.set_trace()
 
@@ -100,7 +100,7 @@ class BaseTrainer(object):
         """
         :params fp: filepath
         """
-        dataset = torch.load(self.data_file).float()[:, :30, :].numpy()
+        dataset = torch.load(self.data_file).float()[:, :30, :]
 
         maxepp = [float(torch.max(torch.abs(dataset[:, :, i]))) for i in range(3)]
         for i in range(3):
@@ -108,7 +108,7 @@ class BaseTrainer(object):
         dataset[:, :, 2] -= 0.5
         dataset = dataset[:int(0.7 * len(dataset))]
 
-        train_params = {'data': dataset, 'labels': np.ones(len(dataset)), 'shuffle': True,
+        train_params = {'data': dataset.numpy(), 'labels': np.ones(len(dataset)), 'shuffle': True,
                         'repeat': True, 'num_points_per_object': self.num_points_per_object,
                         'batch_size': self.batch_size, 'sess': self.sess}
 
