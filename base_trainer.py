@@ -100,7 +100,7 @@ class BaseTrainer(object):
         """
         :params fp: filepath
         """
-        dataset = torch.load(self.data_file).float()[:, :30, :].to_numpy()
+        dataset = torch.load(self.data_file).float()[:, :30, :].numpy()
 
         maxepp = [float(torch.max(torch.abs(dataset[:, :, i]))) for i in range(3)]
         for i in range(3):
