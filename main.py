@@ -1,4 +1,4 @@
-#import gpu_select
+# import gpu_select
 import argparse
 import numpy as np
 import os
@@ -28,7 +28,7 @@ parsed['out_dir'] = './results/aug_points_{0}_opt_{1}_lr_{2}_{3}_c_{4}_z1_{5}_z2
         parsed['optimizer'],
         parsed['d_lr'],
         parsed['g_lr'],
-        parsed['critic_steps'], 
+        parsed['critic_steps'],
         parsed['z1_dim'],
         parsed['z2_dim'],
         parsed['d_dim'],
@@ -43,7 +43,7 @@ parsed['out_dir'] = './results/aug_points_{0}_opt_{1}_lr_{2}_{3}_c_{4}_z1_{5}_z2
         parsed['invact']
         )
 if not os.path.exists(parsed['out_dir']):
-    os.makedirs(parsed['out_dir']) 
+    os.makedirs(parsed['out_dir'])
 
 # Parse number of objects
 if parsed['obj'] == 'multi10':
@@ -55,7 +55,7 @@ elif parsed['obj'] == 'multi40':
 else:
     parsed['obj'] = int(parsed['obj'])
 
-# Print 
+# Print
 maxLen = max([len(ii) for ii in parsed.keys()])
 fmtString = '\t%' + str(maxLen) + 's : %s'
 with open(os.path.join(parsed['out_dir'],'log.txt'), 'w') as f:
@@ -72,7 +72,7 @@ with open(os.path.join(parsed['out_dir'],'log.txt'), 'w') as f:
 
     if parsed['invact'] == 'tanh':
     	g_inv = G_inv_Tanh(x_dim=parsed['x_dim'], d_dim=parsed['d_dim'], z1_dim=parsed['z1_dim'], pool=parsed['pool'])
-    
+
     # write structure to log file
     f.write(d.__str__() + '\n')
     f.write(g.__str__() + '\n')

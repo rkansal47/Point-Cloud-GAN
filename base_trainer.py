@@ -26,15 +26,15 @@ class BaseTrainer(object):
         self.pth_G_inv = getattr(torch_model, self.G_inv.__class__.__name__)(x_dim=params['x_dim'], d_dim=params['d_dim'], z1_dim=params['z1_dim'], pool=params['pool'])
 
         # transfer parameters to self
-        for key, val in params.items(): 
+        for key, val in params.items():
             setattr(self, key, val)
 
         #config = tf.ConfigProto()
         #config.graph_options.optimizer_options.global_jit_level = tf.OptimizerOptions.ON_1
         #config = tf.ConfigProto(allow_soft_placement = True)
 
-        self.sess = tf.Session() #config=config)
-        self.samples_from_target_distribution, _ = self.init_data().next_batch
+        self.sess = tf.Session()  # config=config)
+        self.samples_from_target_distribution = self.init_data().next_batch
 
         #pdb.set_trace()
 
@@ -66,7 +66,7 @@ class BaseTrainer(object):
         num_gpus = len(self.gpus)
         for k, v in kwargs.items():
             in_splits[k] = tf.split(v, num_gpus)
-    
+
         out_split = []
         for i in self.gpus:
             with tf.device(tf.DeviceSpec(device_type="GPU", device_index=i)):
@@ -74,16 +74,16 @@ class BaseTrainer(object):
                                        reuse=(i != self.gpus[0])):
                     #pdb.set_trace()
                     out_split.append(self.build(**{k: v[i] for k, v in in_splits.items()}))
-    
+
         outputs = zip(*out_split)
         outputs = [tf.reduce_mean(output) for output in outputs]
-    
+
         return outputs
 
 
 
     def generate_noise(self):
-        return tf.random_normal([self.batch_size//len(self.gpus), self.num_points_per_object, self.z2_dim])
+        return tf.random_normal([self.batch_size //len(self.gpus), self.num_points_per_object, self.z2_dim])
 
 
     def build(self, inputs):
@@ -100,33 +100,38 @@ class BaseTrainer(object):
         """
         :params fp: filepath
         """
-        with h5py.File(self.data_file, 'r') as f:
-            trd= np.array(f['tr_cloud'])
-            trl = np.array(f['tr_labels'])
-            ted = np.array(f['test_cloud'])
-            tel = np.array(f['test_labels'])
-            train_params = {'data': trd, 'labels': trl, 'shuffle': True, 
-                            'repeat': True, 'num_points_per_object': self.num_points_per_object, 
-                            'batch_size' : self.batch_size, 'sess': self.sess}
-            tr_loader = DataLoader(train_params, y=self.obj, do_standardize=True, n_obj=self.n_obj, do_augmentation=True)
+        dataset = torch.load(self.data_file).float()[:, :30, :].to_numpy()
+
+        maxepp = [float(torch.max(torch.abs(dataset[:, :, i]))) for i in range(3)]
+        for i in range(3):
+            dataset[:, :, i] /= maxepp[i]
+        dataset[:, :, 2] -= 0.5
+        dataset = dataset[:int(0.7 * len(dataset))]
+
+        train_params = {'data': dataset, 'labels': np.ones(len(dataset)), 'shuffle': True,
+                        'repeat': True, 'num_points_per_object': self.num_points_per_object,
+                        'batch_size': self.batch_size, 'sess': self.sess}
+
+        tr_loader = DataLoader(train_params, y=self.obj, n_obj=self.n_obj)
+
         return tr_loader
 
 
     def train(self):
         f = open(os.path.join(self.out_dir,'log.txt'), 'a')
-        g = None # open(os.path.join(self.out_dir,'out.txt'), 'w')
+        g = None  # open(os.path.join(self.out_dir,'out.txt'), 'w')
 
         train_writer = tf.summary.FileWriter( os.path.join(self.out_dir,'tb'), self.sess.graph)
         merge = tf.summary.merge_all()
 
         self.sess.run(tf.global_variables_initializer())
-        
+
         #pdb.set_trace()
         iters = trange(self.num_iters, desc="Dloss: 0.00000 Gloss: 0.000000 ", file = g, ncols=120)
         for i in iters:
 
             if i % 50 != 0:
-            
+
                 # D part
                 for j in range(self.critic_steps):
                     self.sess.run(self.trainD)
