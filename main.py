@@ -5,10 +5,8 @@ import os
 import random
 import torch
 import sys
-import pdb
 import yaml
-import pprofile
-from model import * #D, G, weights_init, Res_G, D_noro, skipG
+from model import *  # D, G, weights_init, Res_G, D_noro, skipG
 from sandwich_trainer import SandwichTrainer
 
 parser = argparse.ArgumentParser()
@@ -23,7 +21,7 @@ with open(args.config, 'r') as f:
     parsed = yaml.load(f)
 
 
-parsed['out_dir'] = './results/aug_points_{0}_opt_{1}_lr_{2}_{3}_c_{4}_z1_{5}_z2_{6}_d_{7}_clip_{8}__pool_{9}_type_{10}_gradpen_{11}_Arc_{12}_invact_{16}_N_{13}_odim_{14}_obj_{15}'.format(
+parsed['out_dir'] = '/graphganvol/Point-Cloud-GAN/results/aug_points_{0}_opt_{1}_lr_{2}_{3}_c_{4}_z1_{5}_z2_{6}_d_{7}_clip_{8}__pool_{9}_type_{10}_gradpen_{11}_Arc_{12}_invact_{16}_N_{13}_odim_{14}_obj_{15}'.format(
         parsed['num_points_per_object'],
         parsed['optimizer'],
         parsed['d_lr'],
