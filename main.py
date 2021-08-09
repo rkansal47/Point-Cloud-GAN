@@ -50,6 +50,8 @@ elif parsed['obj'] == 'multi30':
     parsed['obj'] = list(range(30))
 elif parsed['obj'] == 'multi40':
     parsed['obj'] = list(range(40))
+elif parsed['obj'] == 'g' or parsed['obj'] == 't' or parsed['obj'] == 'q':
+    parsed['obj'] = 1
 else:
     parsed['obj'] = int(parsed['obj'])
 

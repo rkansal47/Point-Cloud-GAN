@@ -15,7 +15,7 @@ weight_clip: 0.2
 add_noise: False
 kernel: l2
 data_file: /graphganvol/mnist_graph_gan/jets/datasets/all_t_jets_150p_polarrel.pt
-obj: 1
+obj: t
 base: 1.0
 pool: max1
 lambda_grad_pen: 0.05
